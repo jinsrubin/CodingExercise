@@ -1,67 +1,54 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PointOfSaleScanningSystem
 {
     public class Terminal
     {
-
+        public char ProductCode;
+        public int Multiples;
+        public decimal Price;
         public Terminal()
         {
-
         }
 
-        public double ScanProduct(string item)
+        public decimal ScanProduct(string item)
         {
-            double productPrice = 0.00f;
+            decimal productPriceTotal = 0.00M;
+            var productPricing = SetPricing();
             char[] distinctItem = item.Distinct().ToArray();
             for (int i = 0; i < distinctItem.Length; i++)
             {
                 int charFrequency = item.Count(f => (f == distinctItem[i]));
-                if (distinctItem[i] == 'A')
-                {
-                    if (charFrequency >= 3)
-                    {
-                        productPrice = productPrice + 3.00f;
-                        charFrequency = charFrequency - 3;
-                    }
-                    for (int j = 0; j < charFrequency; j++)
-                    {
-                        productPrice = productPrice + 1.25;
-                    }
+                var list = productPricing.Where(p => p.ProductCode == distinctItem[i]);
+                var orderedList = list.OrderByDescending(p => p.Multiples);
 
-                }
-                else if (distinctItem[i] == 'C')
+                foreach (var element in orderedList)
                 {
-                    if (charFrequency >= 6)
+                    if (charFrequency >= element.Multiples)
                     {
-                        productPrice = productPrice + 5.00;
-                        charFrequency = charFrequency - 6;
-                    }
-                    for (int j = 0; j < charFrequency; j++)
-                    {
-                        productPrice = productPrice + 1.00;
-                    }
-                }
-                else if (distinctItem[i] == 'B')
-                {
-                    for (int j = 0; j < charFrequency; j++)
-                    {
-                        productPrice = productPrice + 4.25;
-                    }
-                }
-                else if (distinctItem[i] == 'D')
-                {
-                    for (int j = 0; j < charFrequency; j++)
-                    {
-                        productPrice = productPrice + 0.75;
+                        int numberOfProductCodes = charFrequency / element.Multiples;
+                        productPriceTotal = productPriceTotal + (numberOfProductCodes * element.Price);
+                        charFrequency = charFrequency - element.Multiples;
                     }
                 }
             }
-            return productPrice;
+            return productPriceTotal;
         }
+
+        private List<Terminal> SetPricing()
+        {
+            List<Terminal> list = new List<Terminal>
+            {
+                new Terminal{ProductCode='A',Multiples=3,Price=3.00M},
+                new Terminal{ProductCode='A',Multiples=1,Price=1.25M},
+                new Terminal{ProductCode='B',Multiples=1,Price=4.25M},
+                new Terminal{ProductCode='C',Multiples=1,Price=1.00M},
+                new Terminal{ProductCode='C',Multiples=6,Price=5.00M},
+                new Terminal{ProductCode='D',Multiples=1,Price=0.75M}
+            };
+            return list;
+        }
+
     }
 }

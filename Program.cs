@@ -8,8 +8,8 @@ namespace PointOfSaleScanningSystem
         static void Main(string[] args)
         {
             string item = Console.ReadLine();
-            Terminal objTerminal = new Terminal();
-            var productPrice = objTerminal.ScanProduct(item);
+            var Terminal = new Terminal();
+            var productPrice = Terminal.ScanProduct(item);
             Console.WriteLine("$" + productPrice);
             Console.ReadLine();
         }
